@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style></style>
+    <link rel="stylesheet" href="css/khan-exercise.css">
+  </head>
+  <body>
+  <div class="graphie">
+  graphInit({
+	range: 11,
+	scale: 20,
+	axisArrows: "&lt;-&gt;",
+	tickStep: 1,
+	labelStep: 1,
+	gridOpacity: 0.05,
+	axisOpacity: 0.2,
+	tickOpacity: 0.4,
+	labelOpacity: 0.5
+  });
+
+	label( [ 0, -11 ], "y", "below" );
+	label( [ 11, 0 ], "x", "right" );
+	
+	addMouseLayer();
+		
+		
+		graph.pointA = addMovablePoint({
+						coord: [ -5, 5 ],
+						snapX: 0.5,
+						snapY: 0.5,
+						normalStyle: {
+							stroke: KhanUtil.BLUE,
+							fill: KhanUtil.BLUE
+						}
+					});
+					graph.pointB = addMovablePoint({
+						coord: [ 5, 5 ],
+						snapX: 0.5,
+						snapY: 0.5,
+						normalStyle: {
+							stroke: KhanUtil.BLUE,
+							fill: KhanUtil.BLUE
+						}
+					});	
+					
+graph.line1 = bogusShape;
+					graph.shading = bogusShape;
+
+					graph.update = function() {
+						graph.line1.remove();
+						graph.shading.remove();
+						if ( abs( graph.pointB.coord[0] - graph.pointA.coord[0] ) &gt; 0.001 ) {
+							var slope = ( graph.pointB.coord[1] - graph.pointA.coord[1] ) / ( graph.pointB.coord[0] - graph.pointA.coord[0] );
+							var yint = slope * ( 0 - graph.pointA.coord[0] ) + graph.pointA.coord[1];
+							var shadeEdge = ( ( graph.pointA.coord[0] &lt; graph.pointB.coord[0] ) ? graph.shadetop : !graph.shadetop ) ? 11 : -11;
+							style({ stroke: BLUE, strokeWidth: 2, strokeDasharray: graph.dasharray }, function() {
+								graph.line1 = line( [ -11, -11 * slope + yint ], [ 11, 11 * slope + yint ] ).toBack();
+							});
+							style({ fill: BLUE, stroke: null, opacity: KhanUtil.FILL_OPACITY }, function() {
+								graph.shading = path([ [ 11, shadeEdge ], [ 11, 11 * slope + yint ], [ -11, -11 * slope + yint ], [ -11, shadeEdge ] ]);
+							});
+
+						} else {
+							// vertical line
+							var x = graph.pointA.coord[0];
+							var shadeEdge = ( ( graph.pointB.coord[1] &lt; graph.pointA.coord[1] ) ? graph.shadetop : !graph.shadetop ) ? 11 : -11;
+							style({ stroke: BLUE, strokeWidth: 2, strokeDasharray: graph.dasharray }, function() {
+								graph.line1 = line( [ x, -11 ], [ x, 11 ] ).toBack();
+							});
+							style({ fill: BLUE, stroke: null, opacity: KhanUtil.FILL_OPACITY }, function() {
+								graph.shading = path([ [ x, -11 ], [ x, 11 ], [ shadeEdge, 11 ], [ shadeEdge, -11 ] ]);
+							});
+						}
+					};
+
+					// A and B can't be in the same place
+					graph.pointA.onMove = function( x, y ) {
+						if ( x != graph.pointB.coord[0] || y != graph.pointB.coord[1] ) {
+							graph.pointA.setCoord([ x, y ]);
+							graph.update();
+							return true;
+						} else {
+							return false;
+						}
+					}
+					graph.pointB.onMove = function( x, y ) {
+						if ( x != graph.pointA.coord[0] || y != graph.pointA.coord[1] ) {
+							graph.pointB.setCoord([ x, y, ]);
+							graph.update();
+							return true;
+						} else {
+							return false;
+						}
+					}
+
+					graph.dasharray = "";
+					graph.shadetop = true;
+					graph.update();
+					graph.pointA.toFront();
+					graph.pointB.toFront();	
+  </div>
+  
+  <script src="jquery.js"> </script>
+  <script src="jquery-ui.js"> </script>
+  <script>
+//Nepotřebujeme khan-exercise.js	
+	window.Khan = {};
+	// Tohle se může hodit
+	window.Khan.error = function( ) {
+		if ( typeof console !== "undefined" ) {
+			jQuery.each( arguments, function( ix, arg ) {
+				console.error(arg);
+			});
+		}
+		};
+//Scratchpad nemáme, volá se z interactive.js/addMouseLayer()
+	window.Khan.scratchpad = {};
+	window.Khan.scratchpad.disable = function () {};
+
+//Ve window.KhanUtil.currentGraph se objeví objekt právě vytvořeného grafu
+	window.KhanUtil = {};
+  </script>
+  
+  <!-- Kvůli jQuery.tmpl.getVARS -->
+  <script src="utils/tmpl.js"> </script>
+   
+  <!-- Vykreslení popisek os grafu -->
+  <script src="utils/MathJax/1.1a/MathJax.js?config=KAthJax-77111459c7d82564a705f9c5480e2c88"> </script>
+  
+  <!-- Knihovna pro práci s SVG -->
+  <script src="utils/raphael.js"> </script>
+  
+  <!-- Grafí -->
+  <script src="utils/graphie.js"> </script> 
+  
+  <!-- addMouseLayer(); addMoveablePoint(); -->
+  <script src="utils/interactive.js"> </script>
+  
+  <!-- pro MoveablePoint - interaktivita-->
+  <script src="utils/jquery.adhesion.js"> </script>
+  <script src="utils/jquery.mobile.vmouse.js"> </script>
+  <!-- pro MoveablePoint - správné vykreslení-->
+  <script src="utils/math.js"> </script>
+  
+  <!-- Zatím nanic -->
+  <!--
+  <script src="utils/graphie-helpers.js"> </script>
+  <script src="utils/graphie-geometry.js"> </script>
+  <script src="utils/expressions.js"> </script>
+  <script src="utils/math-format.js"> </script>
+  -->
+
+  
+  <script>
+  $(document).ready(function () {
+  //každý jQuery objekt dostal metodu graphie, která v něm najde div .graphie a inicializuje ho
+  	jQuery('body').graphie();
+  	
+  	//window.KhanUtil.addMouseLayer();
+  });
+  </script>
+  </body>
+</html>
