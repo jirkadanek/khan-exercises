@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style></style>
+    <link rel="stylesheet" href="css/khan-exercise.css">
+  </head>
+  <body>
+  
+ 
+  <div class="graphie">
+  </div>
+
+
+  <script src="jquery.js"> </script>
+  <script src="jquery-ui.js"> </script>
+<!-- <script src="khan-exercise.js"> </script> -->
+
+  <script>
+//Nepotřebujeme khan-exercise.js	
+	window.Khan = {};
+	// Tohle se může hodit
+	window.Khan.error = function( ) {
+		if ( typeof console !== "undefined" ) {
+			jQuery.each( arguments, function( ix, arg ) {
+				console.error(arg);
+			});
+		}
+		};
+//Scratchpad nemáme, volá se z interactive.js/addMouseLayer()
+	window.Khan.scratchpad = {};
+	window.Khan.scratchpad.disable = function () {};
+
+//Ve window.KhanUtil.currentGraph se objeví objekt právě vytvořeného grafu
+	window.KhanUtil = {};
+
+  </script>
+  
+  <!-- Kvůli jQuery.tmpl.getVARS -->
+  <script src="utils/tmpl.js"> </script>
+
+  <!-- Vykreslení popisek os grafu -->
+  <script src="utils/MathJax/1.1a/MathJax.js?config=KAthJax-77111459c7d82564a705f9c5480e2c88"> </script>
+  <!-- <script src="utils/MathJax/1.1a/config/KAthJax-77111459c7d82564a705f9c5480e2c88.js"> </script> -->
+
+  <!-- Knihovna pro práci s SVG -->
+  <script src="utils/raphael.js"> </script>
+  
+  <!-- Grafí -->
+  <script src="utils/graphie.js"> </script> 
+  
+  <!-- addMouseLayer(); addMoveablePoint(); -->
+  <script src="utils/interactive.js"> </script>
+  
+  <!-- pro MoveablePoint - interaktivita-->
+  <script src="utils/jquery.adhesion.js"> </script>
+  <script src="utils/jquery.mobile.vmouse.js"> </script>
+  <!-- pro MoveablePoint - správné vykreslení-->
+  <script src="utils/math.js"> </script>
+  <!-- pro mathjaxové výrazy (KhanUtil.expr())-->
+  <script src="utils/expressions.js"> </script>
+ <script src="utils/math-format.js"> </script>
+  <script src="gtutor.js"> </script>
+
+  <!-- Zatím nanic -->
+  <!--
+  <script src="utils/graphie-helpers.js"> </script>
+  <script src="utils/graphie-geometry.js"> </script>
+  <script src="utils/expressions.js"> </script>
+  <script src="utils/math-format.js"> </script>
+  -->
+
+<br>
+<code id="vzorec">
+ax^2 + bx + c
+</code>
+
+  <script>
+  $(document).ready(function () {
+  'use strict';
+  //každý jQuery objekt dostal metodu graphie, která v něm najde div .graphie a inicializuje ho
+  	jQuery('body').graphie();
+var g = graphObj(window.KhanUtil);
+g.initialize();
+
+var l = lineObject({fpoints : [[0, 0], [2, 1]], color : window.KhanUtil.PINK});
+g.addFunc(l);
+
+var c = circleObject([[5,5], [6,6]]);
+g.addFunc(c);
+
+var s = gonioObject({fpoints : [[-5, -5], [-3, -3]], color : window.KhanUtil.GREEN, func: sinFunc});
+g.addFunc(s);
+
+var p = parabolaObject([[-1, -1], [-6, 5]]);
+g.addFunc(p);
+
+
+//var t = gonioObject([[5, -5], [3, -3]], tanFunc);
+//g.addFunc(t);
+
+
+jQuery("#vzorec").tmpl();
+
+  });
+  </script>
+  </body>
+</html>
